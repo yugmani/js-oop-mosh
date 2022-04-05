@@ -95,6 +95,65 @@ console.log('Values only: ', values); //Values only: [2, ƒ ()]
 const entries = Object.entries(circle2);
 console.log('All entries: ', entries); //All entries: [Array[2], Array[2]]
 
+// check if an object has specific properties ---
+if ('radius' in circle2) {
+  console.log('Circle has a radius: ', circle2.radius);
+  //Circle has a radius: 2
+}
+
+// ABSTRACTION
+// 1: Hide the details
+// 2: Show the essentials
+function MyCircle(radius) {
+  let color = 'red'; //this is not a part of the object, it's just a local variable
+  this.radius = radius; //essential, no need to hide
+
+  //scope is temporary and it dies after the execution of the function
+  // but closure stays there even after the execution of function and can access local variables and variables of parent function.
+
+  //We want to hide defaultLocation i.e. this shouldn't be accessible from outside
+  // this.defaultLocation = { x: 0, y: 0 };
+  let defaultLocation = { x: 0, y: 0 }; // implemented
+
+  //We want to hide computeOptimumLocation i.e. this shouldn't be accessible from outside
+  /*
+  this.computeOptimumLocation = function () {
+    //
+  };
+  */
+  //implemented
+  let computeOptimumLocation = function () {
+    //
+  };
+
+  //essential, no need to hide
+  this.draw = function () {
+    // this.radius; //accessing members of an object
+
+    // accessing private members
+    computeOptimumLocation(); //implemented
+    defaultLocation; //implemented
+
+    console.log('it draws');
+  };
+
+  Object.defineProperty(this, 'defaultLocation', {
+    //to make readable from outside of function
+    get: function () {
+      return defaultLocation;
+    },
+    set: function (value) {
+      if (!value.x || !value.y) throw new Error('Invalid Location');
+      defaultLocation = value;
+    },
+  });
+}
+
+const myCircle = new MyCircle(10);
+console.log(myCircle.defaultLocation); // {x: 0, y: 0}
+// myCircle.defaultLocation = 1; // Error: Invalid Location
+myCircle.draw();
+
 // let x = {} is similar to => let x = new Object();
 // let str = new String();    //"", ''. ``
 // let isDone = new Boolean();  //true, false
